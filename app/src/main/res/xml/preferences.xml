@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.ListPreference
+        android:defaultValue="@string/pref_poster_size_default"
+        android:entries="@array/pref_poster_size_entries"
+        android:entryValues="@array/pref_poster_size_values"
+        android:key="@string/pref_poster_size_key"
+        android:title="@string/pref_poster_size_title"
+        />
+
+    <android.support.v7.preference.ListPreference
+        android:defaultValue="@string/pref_image_quality_default"
+        android:entries="@array/pref_image_quality_entries"
+        android:entryValues="@array/pref_image_quality_values"
+        android:key="@string/pref_image_quality_key"
+        android:title="@string/pref_image_quality_title"
+        />
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="True"
+        android:key="@string/pref_save_images_key"
+        android:title="@string/pref_save_images_title"
+        />
+
+</android.support.v7.preference.PreferenceScreen>

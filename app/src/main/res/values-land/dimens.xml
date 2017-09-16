@@ -1,0 +1,8 @@
+<resources>
+
+    <dimen name="spinner_hor_padding">@dimen/gap_xxl</dimen>
+    <dimen name="toolbar_hor_padding">@dimen/gap_l</dimen>
+    <dimen name="details_hor_padding">@dimen/gap_xxl</dimen>
+    <dimen name="rating_hor_padding">@dimen/gap_xl</dimen>
+
+</resources>

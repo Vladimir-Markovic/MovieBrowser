@@ -1,0 +1,36 @@
+<resources>
+
+    <string name="app_name">Movie Browser</string>
+    <string name="action_settings">Settings</string>
+    <string name="poster_content_description">Movie poster</string>
+
+    <string name="title_details">Movie Details</string>
+    <string name="title_settings">Settings</string>
+    <string name="share_movie">Share Movie</string>
+    <string name="share_movie_subject">Checkout this great movie!</string>
+
+    <string name="votes">votes</string>
+
+    <string name="error_details_missing">There are no movie details to display</string>
+    <string name="error_storing_favourite">Error in movie data. Cannot store to favourite.</string>
+
+    <string name="message_offline">You are offline</string>
+
+    <string name="pref_poster_size_title">Poster size</string>
+    <string name="pref_poster_size_key" translatable="false">poster_size</string>
+    <string name="pref_poster_size_default" translatable="false">150</string>
+
+    <string name="pref_image_quality_title">Image quality</string>
+    <string name="pref_image_quality_key" translatable="false">image_quality</string>
+    <string name="pref_image_quality_default" translatable="false">2</string>
+
+    <string name="pref_save_images_title">Save images for favourites</string>
+    <string name="pref_save_images_key" translatable="false">save_images</string>
+
+    <string name="videos">VIDEOS</string>
+    <string name="review">Review </string>
+    <string name="no_video_app">There is no app installed that can show this video. Please install YouTube or a browser app first.</string>
+
+    <string name="shared_element_image" translatable="false">shared_element_image</string>
+
+</resources>

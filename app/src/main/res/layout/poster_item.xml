@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flPosterItem"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/half_poster_spacing"
+    android:descendantFocusability="blocksDescendants"
+    >
+
+    <ImageView
+        android:id="@+id/imvPoster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/poster_content_description"
+        android:transitionName="@string/shared_element_image"
+        />
+
+    <TextView
+        android:id="@+id/txvPoster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center"
+        android:padding="@dimen/gap_m"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight"
+        android:textSize="@dimen/text_size_l"
+        android:textStyle="bold"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/btnFavouriteInMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:background="@color/colorButtonStarBgd"
+        android:minHeight="0dp"
+        android:minWidth="@dimen/fav_button_minw"
+        android:paddingBottom="@dimen/fav_button_padding"
+        android:paddingEnd="@dimen/fav_button_padding"
+        android:paddingLeft="@dimen/fav_button_padding"
+        android:paddingRight="@dimen/fav_button_padding"
+        android:paddingStart="@dimen/fav_button_padding"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_xl"
+        android:textStyle="bold"
+        />
+</FrameLayout>
+

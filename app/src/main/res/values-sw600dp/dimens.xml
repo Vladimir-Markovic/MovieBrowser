@@ -1,0 +1,28 @@
+<resources>
+
+    <dimen name="fav_button_minw">40dp</dimen>
+
+    <dimen name="gap_xxs">8dp</dimen>
+    <dimen name="gap_xs">16dp</dimen>
+    <dimen name="gap_s">24dp</dimen>
+    <dimen name="gap_m">32dp</dimen>
+    <dimen name="gap_l">48dp</dimen>
+    <dimen name="gap_xl">64dp</dimen>
+    <dimen name="gap_xxl">80dp</dimen>
+
+    <dimen name="spinner_ver_padding">16dp</dimen>
+    <dimen name="spinner_hor_padding">16dp</dimen>
+    <dimen name="toolbar_hor_padding">0dp</dimen>
+    <dimen name="details_hor_padding">@dimen/gap_m</dimen>
+    <dimen name="rating_hor_padding">@dimen/gap_s</dimen>
+
+    <dimen name="text_size_xs">16sp</dimen>
+    <dimen name="text_size_s">20sp</dimen>
+    <dimen name="text_size_m">24sp</dimen>
+    <dimen name="text_size_l">28sp</dimen>
+    <dimen name="text_size_xl">34sp</dimen>
+    <dimen name="text_size_xxl">40sp</dimen>
+
+    <dimen name="half_poster_spacing">5dp</dimen>
+
+</resources>

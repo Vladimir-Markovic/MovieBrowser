@@ -1,0 +1,189 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scvDetailsRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/llDetailFragmentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".DetailsFragment"
+        >
+
+        <FrameLayout
+            android:id="@+id/flDetailPosterAndRating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imvPosterDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/poster_content_description"
+                android:transitionName="@string/shared_element_image"
+                />
+
+            <TextView
+                android:id="@+id/txvRatingDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:background="@color/colorRatingBgd"
+                android:gravity="center"
+                android:paddingBottom="@dimen/gap_s"
+                android:paddingEnd="@dimen/rating_hor_padding"
+                android:paddingLeft="@dimen/rating_hor_padding"
+                android:paddingRight="@dimen/rating_hor_padding"
+                android:paddingStart="@dimen/rating_hor_padding"
+                android:paddingTop="@dimen/gap_s"
+                android:textSize="@dimen/text_size_xxl"
+                android:textStyle="bold"
+                tools:text="8.7"
+                />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorTitleBgd"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/gap_m"
+            android:paddingTop="@dimen/gap_m"
+            >
+
+            <TextView
+                android:id="@+id/txvTitleDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:paddingEnd="@dimen/gap_xs"
+                android:paddingLeft="@dimen/details_hor_padding"
+                android:paddingRight="@dimen/gap_xs"
+                android:paddingStart="@dimen/details_hor_padding"
+                android:textColor="@color/colorTextLight"
+                android:textSize="@dimen/text_size_l"
+                android:textStyle="bold"
+                tools:text="Movie Title"
+                />
+
+            <Button
+                android:id="@+id/btnFavourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:minHeight="0dp"
+                android:minWidth="@dimen/gap_xl"
+                android:paddingEnd="@dimen/details_hor_padding"
+                android:paddingLeft="@dimen/gap_xs"
+                android:paddingRight="@dimen/details_hor_padding"
+                android:paddingStart="@dimen/gap_xs"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/text_size_xxl"
+                android:textStyle="bold"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDateVotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/gap_xl"
+            android:paddingTop="@dimen/gap_xl"
+            >
+
+            <TextView
+                android:id="@+id/txvReleaseDateDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="@dimen/gap_xs"
+                android:paddingLeft="@dimen/details_hor_padding"
+                android:paddingRight="@dimen/gap_xs"
+                android:paddingStart="@dimen/details_hor_padding"
+                android:textColor="@color/colorTextLight"
+                android:textSize="@dimen/text_size_m"
+                tools:text="20 June 2016"
+                />
+
+            <TextView
+                android:id="@+id/txvVotesDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/details_hor_padding"
+                android:paddingLeft="@dimen/gap_xs"
+                android:paddingRight="@dimen/details_hor_padding"
+                android:paddingStart="@dimen/gap_xs"
+                android:textColor="@color/colorLight"
+                android:textSize="@dimen/text_size_s"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txvOverviewDetail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="@dimen/gap_xl"
+            android:paddingEnd="@dimen/details_hor_padding"
+            android:paddingLeft="@dimen/details_hor_padding"
+            android:paddingRight="@dimen/details_hor_padding"
+            android:paddingStart="@dimen/details_hor_padding"
+            android:textColor="@color/colorTextYellow"
+            android:textSize="@dimen/text_size_m"
+            android:textStyle="italic"
+            tools:text="A long overview text. It can be very long. Stretching over many lines."
+            />
+
+        <LinearLayout
+            android:id="@+id/llVideos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:orientation="horizontal"
+            />
+
+        <TextView
+            android:id="@+id/txvVideos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="@dimen/gap_xxl"
+            android:paddingTop="@dimen/gap_m"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextLight"
+            android:textSize="@dimen/text_size_m"
+            tools:text="VIDEOS"
+            />
+
+        <RadioGroup
+            android:id="@+id/rgReviewButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            />
+
+        <TextView
+            android:id="@+id/txvReviewDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:padding="@dimen/details_hor_padding"
+            android:textColor="@color/colorTextLight"
+            android:textSize="@dimen/text_size_m"
+            tools:text="A long review text. It can be very long. Stretching over many lines."
+            />
+
+    </LinearLayout>
+
+</ScrollView>

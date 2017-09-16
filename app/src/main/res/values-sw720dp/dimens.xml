@@ -1,0 +1,6 @@
+<resources>
+
+    <dimen name="details_hor_padding">@dimen/gap_l</dimen>
+    <dimen name="rating_hor_padding">@dimen/gap_m</dimen>
+
+</resources>
