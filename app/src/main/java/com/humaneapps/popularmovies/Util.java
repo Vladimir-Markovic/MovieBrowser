@@ -119,17 +119,17 @@ public class Util {
 
     // Populate and customize spinner text size and color and padding.
     static void populateAndCustomizeSpinner(Spinner spinner, String[] array, Context context,
+                                            int itemLayout, int dropDownItemLayout,
                                             int textSizeId, int textColorId,
                                             final int topBottom, final int leftRight) {
         final float textSize = context.getResources().getDimension(textSizeId);
         final int textColor = ContextCompat.getColor(context, textColorId);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, array) {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, itemLayout, array) {
             @Override
             @NonNull
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                TextView textView = view.findViewById(android.R.id.text1);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
                 textView.setTextColor(textColor);
                 textView.setPadding(leftRight, topBottom, leftRight, topBottom);
@@ -137,7 +137,7 @@ public class Util {
                 return view;
             }
         };
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        arrayAdapter.setDropDownViewResource(dropDownItemLayout);
         spinner.setAdapter(arrayAdapter);
     }
 

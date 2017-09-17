@@ -89,12 +89,12 @@ public class MainFragment extends Fragment {
         // Populate spinner with two sort options: "Sort by most popular" and "Sort by top rated'
         Util.populateAndCustomizeSpinner(mSpnSort,
                 mApplication.getResources().getStringArray(R.array.sort_display), mApplication,
+                android.R.layout.simple_spinner_item, R.layout.spinner_item,
                 R.dimen.text_size_s, R.color.colorTextLight, 0, 0
         );
 
         // Set RecyclerView for displaying movie posters
         recyclerView.setLayoutManager(mApplication.posterAdapter.getGridLayoutManager());
-//        recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mApplication.posterAdapter);
 
