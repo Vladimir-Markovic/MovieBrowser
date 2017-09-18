@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private PopularMovies mApplication;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
         // Get shared preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Get indicator whether to save images for favourites.
-        mApplication.setSavingImages(sharedPreferences.getBoolean(getString(R.string.pref_save_images_key), true));
-        // Code in setPosterAndBackdropIndices will determine what is the index (in image widths array)
+        mApplication.setSavingImages(sharedPreferences.getBoolean(getString(R.string
+                .pref_save_images_key), true));
+        // Code in setPosterAndBackdropIndices will determine what is the index (in image widths
+        // array)
         // of image width most suited. imageQualityOffset specifies how many indices to go back from
         // most suited, and is specified by user choice in preference for image quality.
         int imageQualityOffset = Integer.parseInt(sharedPreferences.getString(
@@ -84,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Get and store orientation.
         mApplication.setLandscape(
-                getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+                getResources().getConfiguration().orientation == Configuration
+                        .ORIENTATION_LANDSCAPE);
 
         // If fragmentMain is present it is tablet mode and no need to add it as it's contained in
         // the resource layout. In phones need to add it to fragmentContainer.
@@ -106,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
         mApplication.setFragmentWidths();
         if (mApplication.isTwoPane()) {
             // Set MainFragment width to calculated.
-            Fragment mainFragment = getSupportFragmentManager().findFragmentByTag(getString(R.string.app_name));
+            Fragment mainFragment = getSupportFragmentManager().findFragmentByTag(getString(R
+                    .string.app_name));
             if (mainFragment != null) {
                 View mfView = mainFragment.getView();
                 ViewGroup.LayoutParams params;
@@ -118,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Code in setPosterAndBackdropIndices will determine what is the index (in image widths array)
+        // Code in setPosterAndBackdropIndices will determine what is the index (in image widths
+        // array)
         // of image width most suited. imageQualityOffset specifies how many indices to go back from
         // most suited, and is specified by user choice in preference for image quality.
         mApplication.setPosterAndBackdropIndices(imageQualityOffset);
@@ -133,19 +140,23 @@ public class MainActivity extends AppCompatActivity {
                     Util.PARAM_PAGE_POPULAR, 1);
             mPage[Util.SPINNER_INDEX_TOP_RATED] = savedInstanceState.getInt(
                     Util.PARAM_PAGE_TOP_RATED, 1);
-            ArrayList<String> tempArrayList = savedInstanceState.getStringArrayList(Util.PARAM_POPULAR_JSONS);
+            ArrayList<String> tempArrayList = savedInstanceState.getStringArrayList(Util
+                    .PARAM_POPULAR_JSONS);
             if (tempArrayList != null) {
-                mApplication.posterAdapter.jsonStrings[Util.SPINNER_INDEX_POPULAR].addAll(tempArrayList);
+                mApplication.posterAdapter.jsonStrings[Util.SPINNER_INDEX_POPULAR].addAll
+                        (tempArrayList);
             }
             tempArrayList = savedInstanceState.getStringArrayList(Util.PARAM_TOP_RATED_JSONS);
             if (tempArrayList != null) {
-                mApplication.posterAdapter.jsonStrings[Util.SPINNER_INDEX_TOP_RATED].addAll(tempArrayList);
+                mApplication.posterAdapter.jsonStrings[Util.SPINNER_INDEX_TOP_RATED].addAll
+                        (tempArrayList);
             }
         } else {
             // If 'cold' start, 'garbage collect' images of ex-favourites (or delete all if user
             // changed preference for saving images to off).
             Intent deleteImagesIntent = new Intent(this, ServiceDeleteImages.class);
-            deleteImagesIntent.putExtra(getString(R.string.pref_save_images_key), mApplication.saveImages());
+            deleteImagesIntent.putExtra(getString(R.string.pref_save_images_key), mApplication
+                    .saveImages());
             startService(deleteImagesIntent);
         }
 
@@ -179,11 +190,31 @@ public class MainActivity extends AppCompatActivity {
         // Get action id.
         int id = item.getItemId();
 
-        // For action 'settings':
-        if (id == R.id.action_settings) {
-            // Show SettingsFragment
-            showFragment(new SettingsFragment(), getString(R.string.title_settings), true);
-            return true;
+        switch (id) {
+            case R.id.action_settings: {
+                // Show SettingsFragment
+                showFragment(new SettingsFragment(), getString(R.string.title_settings), true);
+                return true;
+            }
+            case R.id.action_about: {
+                // Show SettingsFragment
+                String message = getString(R.string.tmdb_attribution);
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message,
+                        Snackbar.LENGTH_INDEFINITE);
+                // For indefinite Snackbar duration, show dismiss option.
+                TextView textView = snackbar.getView().findViewById(
+                        android.support.design.R.id.snackbar_text);
+                textView.setSingleLine(false);
+                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tmdb, 0, 0, 0);
+                textView.setCompoundDrawablePadding(getResources()
+                        .getDimensionPixelOffset(R.dimen.snack_icon_padding));
+                snackbar.setAction(getString(R.string.dismiss), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                });
+                snackbar.show();
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -194,8 +225,10 @@ public class MainActivity extends AppCompatActivity {
      * For showing Main or Settings Fragment.
      *
      * @param fragment       - instance of the fragment to be shown.
-     * @param title          - title of the fragment to be shown - added to transaction and used as tag.
-     * @param addToBackStack - boolean to determine whether to add fragment transaction to back stack.
+     * @param title          - title of the fragment to be shown - added to transaction and used
+     *                       as tag.
+     * @param addToBackStack - boolean to determine whether to add fragment transaction to back
+     *                       stack.
      */
     private void showFragment(Fragment fragment, String title, boolean addToBackStack) {
         // If fragment is already created don't add another on top. Uses title as tag.
@@ -228,7 +261,8 @@ public class MainActivity extends AppCompatActivity {
             // titles are set as tag when adding to back stack (in phones).
             if (!mApplication.isTwoPane()) {
                 try {
-                    setTitle(getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1).getName());
+                    setTitle(getSupportFragmentManager().getBackStackEntryAt(backStackCount - 1)
+                            .getName());
                 } catch (IndexOutOfBoundsException e) {
                     setTitle(getString(R.string.title_details));
                 }
@@ -272,11 +306,13 @@ public class MainActivity extends AppCompatActivity {
             if (intent.hasExtra(MoviesContract.COLUMN_DATA_JSON)) {
                 // Get fetched JSON string of movies.
                 String jsonString = intent.getStringExtra(MoviesContract.COLUMN_DATA_JSON);
-                // Message might have been shown if offline. Remove it if it was as we're back online.
+                // Message might have been shown if offline. Remove it if it was as we're back
+                // online.
                 removeMessage();
                 // Prevent exceptions and unwanted situations.
                 if (jsonString == null || showingFavourites()) { return; }
-                // For mPage 1, clear ArrayList of JSON strings for current spinner index in PosterAdapter.
+                // For mPage 1, clear ArrayList of JSON strings for current spinner index in
+                // PosterAdapter.
                 if (mPage[spinnerIndex] == 1) { clearJsonStrings(); }
                 // Add movies to poster adapter from JSON string. This also adds JSON string to
                 // ArrayList of JSON strings for current spinner index in PosterAdapter.
@@ -342,14 +378,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // Show message to turn internet on (if there is no internet connection and not showing favourites).
-    // Message will be shown while showing favourite only while offline if specified to save favourite
+    // Show message to turn internet on (if there is no internet connection and not showing
+    // favourites).
+    // Message will be shown while showing favourite only while offline if specified to save
+    // favourite
     // images and there is a movie in favourites without saved image to show.
     void showOfflineMessage(boolean... params) {
 
         // Don't show message if showing favourites.
         boolean stopMessage = showingFavourites();
-        // params[0] is used to force showing message even if showingFavourites, for case explained above.
+        // params[0] is used to force showing message even if showingFavourites, for case
+        // explained above.
         if (params.length > 0) { stopMessage = !params[0]; }
         // If showing favourites and not forcing message, don't show it.
         if (stopMessage) { return; }
@@ -376,8 +415,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // Show a message with yellow background at top of the screen, with specified text size and padding.
-    private void addTopYellowMessage(String message, int imageId, float messageTextSize, int padding) {
+    // Show a message with yellow background at top of the screen, with specified text size and
+    // padding.
+    private void addTopYellowMessage(String message, int imageId, float messageTextSize, int
+            padding) {
         // If old message is showing, remove it
         removeMessage();
         addMessage(message, imageId, messageTextSize, padding, Color.YELLOW, 0);
@@ -406,8 +447,10 @@ public class MainActivity extends AppCompatActivity {
         // I
         if (mLinearLayout == null || mLinearLayout.indexOfChild(mImvLoading) == -1) {
 
-            ViewGroup.LayoutParams paramsMatchWrap = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            ViewGroup.LayoutParams paramsWrapWrap = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams paramsMatchWrap = new ViewGroup.LayoutParams(ViewGroup
+                    .LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams paramsWrapWrap = new ViewGroup.LayoutParams(ViewGroup
+                    .LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
             // Set containing linear layout for the message
             mLinearLayout = new LinearLayout(this);
@@ -496,12 +539,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Clear all stored movie data for current spinner selection.
-    private void clearJsonStrings() { mApplication.posterAdapter.jsonStrings[spinnerIndex].clear(); }
+    private void clearJsonStrings() {
+        mApplication.posterAdapter.jsonStrings[spinnerIndex].clear
+                ();
+    }
 
 
     // Restore movie data from stored JSON strings for current spinner selection.
-    void addPages() { mApplication.posterAdapter.addPages(
-            mApplication.posterAdapter.jsonStrings[spinnerIndex]); }
+    void addPages() {
+        mApplication.posterAdapter.addPages(
+                mApplication.posterAdapter.jsonStrings[spinnerIndex]);
+    }
 
 
     @Override

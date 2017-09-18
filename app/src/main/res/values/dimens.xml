@@ -26,4 +26,6 @@
 
     <dimen name="half_poster_spacing">4dp</dimen>
 
+    <dimen name="snack_icon_padding">16dp</dimen>
+
 </resources>
