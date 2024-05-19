@@ -6,7 +6,8 @@ package com.humaneapps.popularmovies.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.humaneapps.popularmovies.Util;
 import com.humaneapps.popularmovies.data.MoviesContract;

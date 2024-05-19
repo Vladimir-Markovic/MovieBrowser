@@ -10,18 +10,13 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -43,11 +38,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.ShareActionProvider;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.humaneapps.popularmovies.data.MoviesContract;
+import com.humaneapps.popularmovies.databinding.FragmentDetailsBinding;
 import com.humaneapps.popularmovies.service.ServiceSaveImages;
 
 import org.json.JSONArray;
@@ -56,9 +61,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Locale;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Displays movie details: backdrop image, movie title, release date, overview, rating, vote number,
@@ -83,34 +85,20 @@ public class DetailsFragment extends Fragment {
     // to comment on this in particular.
 
     // Views for displaying the movie details.
-    @BindView(R.id.scvDetailsRoot)
     ScrollView mScvDetails;
-    @BindView(R.id.llDetailFragmentLayout)
     LinearLayout mLlDetailFragmentLayout;
-    @BindView(R.id.flDetailPosterAndRating)
     FrameLayout mFlPosterAndRating;
-    @BindView(R.id.imvPosterDetail)
     ImageView mImvPoster;
-    @BindView(R.id.txvTitleDetail)
     TextView mTxvTitle;
-    @BindView(R.id.txvReleaseDateDetail)
     TextView mTxvReleaseDate;
-    @BindView(R.id.txvOverviewDetail)
     TextView mTxvOverview;
-    @BindView(R.id.txvRatingDetail)
     TextView mTxvRating;
-    @BindView(R.id.txvVotesDetail)
     TextView mTxvVotes;
-    @BindView(R.id.txvVideos)
     TextView mTxvVideos;
-    @BindView(R.id.llVideos)
     LinearLayout mLlVideos;
-    @BindView(R.id.rgReviewButtons)
     RadioGroup mRgReviewButtons;
     private RadioButton[] mRbReviews;
-    @BindView(R.id.txvReviewDisplay)
     TextView mTxvReviewDisplay;
-    @BindView(R.id.btnFavourite)
     Button mBtnFavourite;
 
     // For holding some of the needed movie details.
@@ -149,7 +137,7 @@ public class DetailsFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         // Store context into mActivity for passing as context until activity is created.
         mActivity = (Activity) context;
@@ -159,12 +147,24 @@ public class DetailsFragment extends Fragment {
 
     @SuppressWarnings("deprecation")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentDetailsBinding binding = FragmentDetailsBinding.inflate(inflater, container, false);
 
-        // Inflate the layout for this fragment.
-        View rootView = inflater.inflate(R.layout.fragment_details, container, false);
-        // Bind views using ButterKnife.
-        ButterKnife.bind(this, rootView);
+        mScvDetails = binding.scvDetailsRoot;
+        mLlDetailFragmentLayout = binding.llDetailFragmentLayout;
+        mFlPosterAndRating = binding.flDetailPosterAndRating;
+        mImvPoster = binding.imvPosterDetail;
+        mTxvTitle = binding.txvTitleDetail;
+        mTxvReleaseDate = binding.txvReleaseDateDetail;
+        mTxvOverview = binding.txvOverviewDetail;
+        mTxvRating = binding.txvRatingDetail;
+        mTxvVotes = binding.txvVotesDetail;
+        mTxvVideos = binding.txvVideos;
+        mLlVideos = binding.llVideos;
+        mRgReviewButtons = binding.rgReviewButtons;
+        mTxvReviewDisplay = binding.txvReviewDisplay;
+        mBtnFavourite = binding.btnFavourite;
+
         // Set listener to favourite button to add/remove to/from favourites.
         mBtnFavourite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +175,7 @@ public class DetailsFragment extends Fragment {
         mBtnFavourite.setText(Html.fromHtml(Util.STAR_SYMBOL));
 
         // Return inflated root view.
-        return rootView;
+        return binding.getRoot();
 
     } // End onCreateView method
 
@@ -222,7 +222,7 @@ public class DetailsFragment extends Fragment {
 
     // Save state on rotation.
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(MoviesContract.COLUMN_DATA_JSON, mJsonString);
         outState.putInt(Util.PARAM_SHOWN_REVIEW, mShownReviewIndex);
@@ -243,7 +243,7 @@ public class DetailsFragment extends Fragment {
 
     // Add share menu item for sharing first video functionality.
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         // Inflate menu_fragment_detail containing menu item 'share'.
@@ -424,7 +424,7 @@ public class DetailsFragment extends Fragment {
                     acbVideos[i].setTextSize(TypedValue.COMPLEX_UNIT_PX,
                             mApplication.getResources().getDimension(R.dimen.text_size_m)
                     );
-                    acbVideos[i].setSupportBackgroundTintList(ColorStateList.valueOf(
+                    acbVideos[i].setBackgroundTintList(ColorStateList.valueOf(
                             ContextCompat.getColor(mApplication, R.color.colorAccent)));
                     acbVideos[i].setCompoundDrawablesWithIntrinsicBounds(
                             ContextCompat.getDrawable(mApplication, android.R.drawable.ic_media_play), null, null, null);
@@ -822,31 +822,29 @@ public class DetailsFragment extends Fragment {
         Glide.with(mImvPoster.getContext()).load(backdropPathFull)
                 .override(backdropWidth, backdropHeight).placeholder(placeholder)
                 // If cannot display backdrop from url, try displaying poster from url.
-                .listener(new RequestListener<String, GlideDrawable>() {
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Glide.with(mImvPoster.getContext()).load(posterPathFull)
                                 .override(backdropWidth, backdropHeight).placeholder(placeholder)
                                 // If cannot display poster from url, display title as image.
-                                .listener(new RequestListener<String, GlideDrawable>() {
+                                .listener(new RequestListener<Drawable>() {
                                     @Override
-                                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                         noImage();
-                                        return true;
+                                        return false;
                                     }
 
-
                                     @Override
-                                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                                         return false;
                                     }
                                 }).into(mImvPoster); // Load poster if successfully fetched it from url.
                         return true;
                     }
 
-
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         return false;
                     }
                 }).into(mImvPoster); // Load backdrop if successfully fetched it from url.

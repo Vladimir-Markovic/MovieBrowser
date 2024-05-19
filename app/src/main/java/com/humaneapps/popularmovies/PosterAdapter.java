@@ -5,21 +5,15 @@
 package com.humaneapps.popularmovies;
 
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,18 +23,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.humaneapps.popularmovies.data.MoviesContract;
+import com.humaneapps.popularmovies.databinding.PosterItemBinding;
 import com.humaneapps.popularmovies.service.ServiceSaveImages;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 
 /**
@@ -117,7 +118,7 @@ class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.MyViewHolder> {
 
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         // Store instance of attached RecyclerView for calling its public methods.
         this.recyclerView = recyclerView;
@@ -125,7 +126,7 @@ class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.MyViewHolder> {
 
 
     @Override
-    public void onViewAttachedToWindow(MyViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull MyViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         // When reach end of RecyclerView, fetch another page.
         if (holder.getAdapterPosition() == mItemCount - mNumberOfColumns) {
@@ -135,6 +136,7 @@ class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.MyViewHolder> {
 
 
     // Create and return custom ViewHolder.
+    @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View rootView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.poster_item, viewGroup, false);
@@ -421,15 +423,12 @@ class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.MyViewHolder> {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showDetailsActivity(View view, String jsonString) {
         Intent intent = new Intent(mApplication, DetailsActivity.class);
         intent.putExtra(MoviesContract.COLUMN_DATA_JSON, jsonString);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 mMainActivity, view, mApplication.getString(R.string.shared_element_image));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mMainActivity.startActivity(intent, options.toBundle());
-        }
+        mMainActivity.startActivity(intent, options.toBundle());
     }
 
 
@@ -593,31 +592,27 @@ class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.MyViewHolder> {
         Glide.with(mApplication).load(posterPathFull)
                 .override(mColumnWidth, mColumnHeight).placeholder(placeholder)
                 // If cannot display poster from url, try displaying backdrop from url.
-                .listener(new RequestListener<String, GlideDrawable>() {
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        Glide.with(mApplication).load(backdropPathFull)
-                                .override(mColumnWidth, mColumnHeight).placeholder(placeholder)
-                                // If cannot display backdrop from url, display title as image.
-                                .listener(new RequestListener<String, GlideDrawable>() {
-                                    @Override
-                                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                        setTitleAsPoster(movie.getTitle(), myViewHolder);
-                                        return true;
-                                    }
-
-
-                                    @Override
-                                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                        return false;
-                                    }
-                                }).into(imageView); // Load poster if successfully fetched it from url.
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+//                        Glide.with(mApplication).load(backdropPathFull) TODO
+//                                .override(mColumnWidth, mColumnHeight).placeholder(placeholder)
+//                                // If cannot display backdrop from url, display title as image.
+//                                .listener(new RequestListener<Drawable>() {
+//                                    @Override
+//                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+//                                        setTitleAsPoster(movie.getTitle(), myViewHolder);
+//                                        return true;
+//                                    }
+//                                    @Override
+//                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+//                                        return false;
+//                                    }
+//                                }).into(imageView); // Load poster if successfully fetched it from url.
                         return true;
                     }
-
-
                     @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         return false;
                     }
                 }).into(imageView); // Load poster if successfully fetched it from url.
@@ -720,18 +715,19 @@ class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.MyViewHolder> {
     // Custom ViewHolder class for use in RecyclerView.Adapter pattern for holding views.
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.imvPoster)
         ImageView imvPoster;
-        @BindView(R.id.btnFavouriteInMain)
         Button btnFav;
-        @BindView(R.id.txvPoster)
         TextView txvPoster;
 
 
         @SuppressWarnings("deprecation")
         MyViewHolder(View view) {
             super(view);
-            ButterKnife.bind(this, view);
+            PosterItemBinding binding = PosterItemBinding.bind(view);
+            imvPoster = binding.imvPoster;
+            btnFav = binding.btnFavouriteInMain;
+            txvPoster = binding.txvPoster;
+
             btnFav.setText(Html.fromHtml(Util.STAR_SYMBOL));
             txvPoster.setVisibility(View.GONE);
             txvPoster.setWidth(mColumnWidth);

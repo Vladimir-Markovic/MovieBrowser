@@ -2,7 +2,7 @@ package com.humaneapps.popularmovies;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
 /**

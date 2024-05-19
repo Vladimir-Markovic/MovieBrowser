@@ -10,21 +10,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.SwitchPreferenceCompat;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
 
 import com.humaneapps.popularmovies.service.ServiceDeleteImages;
 
 /**
  * Displays and handles preferences using PreferenceFragment.
  */
-public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
 
     // Required public constructor
@@ -58,12 +60,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         mApplication = (PopularMovies) getActivity().getApplication();
     }
 
-
-    // Called during onCreate(Bundle) to supply the preferences for this fragment.
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        // Inflate the layout for this fragment
-        setPreferencesFromResource(R.xml.preferences, rootKey);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences);
     }
 
 
@@ -87,7 +87,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         imageQualityPreference.setOnPreferenceChangeListener(this);
 
         // Get save images preference, set its summary and onPreferenceChange listener.
-        SwitchPreferenceCompat saveImagesPreference = (SwitchPreferenceCompat) getPreferenceManager()
+        SwitchPreference saveImagesPreference = (SwitchPreference) getPreferenceManager()
                 .findPreference(mMainActivity.getString(R.string.pref_save_images_key));
         setPreferenceSummary(saveImagesPreference);
         saveImagesPreference.setOnPreferenceChangeListener(this);
@@ -120,7 +120,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         // Get the current preference value to return.
         String strPrefValue;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
-        if (preference instanceof SwitchPreferenceCompat) {
+        if (preference instanceof SwitchPreference) {
             strPrefValue = sp.getBoolean(preference.getKey(), true) + "";
         } else {
             strPrefValue = sp.getString(preference.getKey(), "");

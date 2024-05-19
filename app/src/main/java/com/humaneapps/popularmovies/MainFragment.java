@@ -7,18 +7,19 @@ package com.humaneapps.popularmovies;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.humaneapps.popularmovies.databinding.FragmentMainBinding;
 
 /**
  * Contains main (start) screen which displays movie posters in a grid
@@ -41,10 +42,8 @@ public class MainFragment extends Fragment {
     // to comment on this in particular.
 
     // For displaying movie posters
-    @BindView(R.id.rvPosters)
     RecyclerView recyclerView;
     // Spinner for selection to display 'popular', 'top rated' or 'favourite' movies.
-    @BindView(R.id.spnSort)
     Spinner mSpnSort;
     // For preserving recycler view scroll when changing sort selection in the above spinner
     // (not used for preserving state on rotation).
@@ -62,7 +61,7 @@ public class MainFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         // Store context into mMainActivity for passing as context until activity is created.
         mMainActivity = (MainActivity) context;
@@ -71,13 +70,13 @@ public class MainFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate fragment_main containing RecyclerView for displaying movie posters.
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        // Bind views using ButterKnife.
-        ButterKnife.bind(this, rootView);
+        FragmentMainBinding binding = FragmentMainBinding.inflate(inflater, container, false);
+        recyclerView = binding.rvPosters;
+        mSpnSort = binding.spnSort;
         // Return inflated view.
-        return rootView;
+        return binding.getRoot();
     } // End onCreateView method.
 
 
@@ -146,7 +145,7 @@ public class MainFragment extends Fragment {
 
     // Save state on rotation
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save scroll position for the current spinner selection
         mRVPosition[mMainActivity.spinnerIndex] = ((GridLayoutManager)
@@ -178,44 +177,39 @@ public class MainFragment extends Fragment {
     private final AdapterView.OnItemSelectedListener mOnItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (parent.getId() == R.id.spnSort) {
+                // Save scroll for the previous spinner selection
+                mRVScroll[mMainActivity.spinnerIndex] = recyclerView.computeVerticalScrollOffset();
+                mRVPosition[mMainActivity.spinnerIndex] = ((GridLayoutManager)
+                        recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                // Store spinner selection.
+                mMainActivity.spinnerIndex = position;
 
-            switch (parent.getId()) {
+                if (mMainActivity.showingFavourites()) {
+                    // If position corresponds to showing favourites.
+                    mApplication.posterAdapter.showFavourite();
+                    mMainActivity.removeMessage();
+                } else {
+                    // If showing popular or top rated:
 
-                case R.id.spnSort: {
-                    // Save scroll for the previous spinner selection
-                    mRVScroll[mMainActivity.spinnerIndex] = recyclerView.computeVerticalScrollOffset();
-                    mRVPosition[mMainActivity.spinnerIndex] = ((GridLayoutManager)
-                            recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                    // Store spinner selection.
-                    mMainActivity.spinnerIndex = position;
-
-                    if (mMainActivity.showingFavourites()) {
-                        // If position corresponds to showing favourites.
-                        mApplication.posterAdapter.showFavourite();
-                        mMainActivity.removeMessage();
+                    // Reflect message status to online/offline status.
+                    if (!Util.isOnline(mMainActivity)) {
+                        mMainActivity.showOfflineMessage();
                     } else {
-                        // If showing popular or top rated:
-
-                        // Reflect message status to online/offline status.
-                        if (!Util.isOnline(mMainActivity)) {
-                            mMainActivity.showOfflineMessage();
-                        } else {
-                            mMainActivity.removeMessage();
-                        }
-                        // Restore data if stored, or fetch from start (page 1).
-                        if (mMainActivity.hasData()) {
-                            mMainActivity.addPages();
-                        } else {
-                            // Update from page 1
-                            mApplication.posterAdapter.clear();
-                            mMainActivity.fetch(1);
-                            break;
-                        }
+                        mMainActivity.removeMessage();
                     }
-
-                    restoreScroll();
-                    break;
+                    // Restore data if stored, or fetch from start (page 1).
+                    if (mMainActivity.hasData()) {
+                        mMainActivity.addPages();
+                    } else {
+                        // Update from page 1
+                        mApplication.posterAdapter.clear();
+                        mMainActivity.fetch(1);
+                        return;
+                    }
                 }
+
+                restoreScroll();
             }
         }
 

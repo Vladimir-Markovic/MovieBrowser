@@ -13,13 +13,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -32,8 +26,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.snackbar.Snackbar;
 import com.humaneapps.popularmovies.data.MoviesContract;
 import com.humaneapps.popularmovies.service.ServiceDeleteImages;
 import com.humaneapps.popularmovies.service.ServiceFetch;
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save state on rotation.
         outState.putInt(Util.PARAM_SPINNER_INDEX, spinnerIndex);
@@ -190,31 +192,27 @@ public class MainActivity extends AppCompatActivity {
         // Get action id.
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.action_settings: {
-                // Show SettingsFragment
-                showFragment(new SettingsFragment(), getString(R.string.title_settings), true);
-                return true;
-            }
-            case R.id.action_about: {
-                // Show SettingsFragment
-                String message = getString(R.string.tmdb_attribution);
-                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message,
-                        Snackbar.LENGTH_INDEFINITE);
-                // For indefinite Snackbar duration, show dismiss option.
-                TextView textView = snackbar.getView().findViewById(
-                        android.support.design.R.id.snackbar_text);
-                textView.setSingleLine(false);
-                textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tmdb, 0, 0, 0);
-                textView.setCompoundDrawablePadding(getResources()
-                        .getDimensionPixelOffset(R.dimen.snack_icon_padding));
-                snackbar.setAction(getString(R.string.dismiss), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {}
-                });
-                snackbar.show();
-                return true;
-            }
+        if (id == R.id.action_settings) {
+            // Show SettingsFragment
+            showFragment(new SettingsFragment(), true, getString(R.string.title_settings));
+            return true;
+        } else if (id == R.id.action_about) {
+            // Show SettingsFragment
+            String message = getString(R.string.tmdb_attribution);
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message,
+                    Snackbar.LENGTH_INDEFINITE);
+            // For indefinite Snackbar duration, show dismiss option.
+            TextView textView = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+            textView.setSingleLine(false);
+            textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_tmdb, 0, 0, 0);
+            textView.setCompoundDrawablePadding(getResources()
+                    .getDimensionPixelOffset(R.dimen.snack_icon_padding));
+            snackbar.setAction(getString(R.string.dismiss), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {}
+            });
+            snackbar.show();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -235,6 +233,21 @@ public class MainActivity extends AppCompatActivity {
         if (getSupportFragmentManager().findFragmentByTag(title) == null) {
             // Create new fragment transaction
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            // Add this fragment to fragment_container.
+            transaction.add(R.id.fragmentContainer, fragment, title);
+            // If so specified, add the transaction to the back stack so the user can navigate back
+            // (no for MainFragment, yes for SettingsFragment).
+            if (addToBackStack) { transaction.addToBackStack(title); }
+            // Commit the transaction
+            transaction.commit();
+        }
+    } // End showFragment
+
+    private void showFragment(android.app.Fragment fragment, boolean addToBackStack, String title) {
+        // If fragment is already created don't add another on top. Uses title as tag.
+        if (getFragmentManager().findFragmentByTag(title) == null) {
+            // Create new fragment transaction
+            android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
             // Add this fragment to fragment_container.
             transaction.add(R.id.fragmentContainer, fragment, title);
             // If so specified, add the transaction to the back stack so the user can navigate back
@@ -408,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Method for specifying a message and optional icon for addTopYellowMessage method.
     private void showTopYellowMessage(String message, int imageId) {
-        if (message == null || "".equals(message)) { return; }
+        if (message == null || message.isEmpty()) { return; }
         addTopYellowMessage(message, imageId,
                 getResources().getDimension(R.dimen.text_size_xs),
                 (int) getResources().getDimension(R.dimen.gap_xxs));
@@ -433,8 +446,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Show message text view and icon and set them
-    private void addMessage(String messageText, int imageId, float messageTextSize, int padding,
-                            int bgdColor, int insertPosition) {
+    private void addMessage(String messageText, int imageId, float messageTextSize, int padding, int bgdColor, int insertPosition) {
 
         // Get layout into which to insert a message. It is main fragment.
         if (mApplication.isTwoPane()) {
@@ -488,11 +500,11 @@ public class MainActivity extends AppCompatActivity {
                     mImvLoading = new ImageView(this);
                     mImvLoading.setLayoutParams(paramsWrapWrap);
                     mImvLoading.setImageResource(imageId);
-                    Glide.with(getApplicationContext()).load(imageId).asGif()
+                    Glide.with(getApplicationContext()).asGif().load(imageId)
                             .override(
                                     (int) (messageTextSize + 1 + 2 * padding),
                                     (int) (messageTextSize + 1 + 2 * padding))
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mImvLoading);
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(mImvLoading);
                     mLinearLayout.addView(mImvLoading);
                 }
             }
@@ -534,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Return true if there is any json string containing movie data stored.
     boolean hasData() {
-        return mApplication.posterAdapter.jsonStrings[spinnerIndex].size() > 0;
+        return !mApplication.posterAdapter.jsonStrings[spinnerIndex].isEmpty();
     }
 
 

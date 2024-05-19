@@ -8,9 +8,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.humaneapps.popularmovies.data.MoviesContract;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Used to:
@@ -22,7 +25,7 @@ import com.humaneapps.popularmovies.data.MoviesContract;
 class TaskFavourite extends AsyncTask<Boolean, Void, Boolean> {
 
     // Used to get content resolver.
-    private final Context mContext;
+    private final WeakReference<Context> mContext;
     // Will contain passed in info for inserting and updating.
     private final ContentValues mContentValues;
     // Used as selection argument for deleting and updating.
@@ -40,10 +43,9 @@ class TaskFavourite extends AsyncTask<Boolean, Void, Boolean> {
 
 
     // Constructor
-    TaskFavourite(AsyncResponseFavourite asyncResponse, Context context, ContentValues values,
-                  int tmdbId) {
+    TaskFavourite(AsyncResponseFavourite asyncResponse, Context context, ContentValues values, int tmdbId) {
         mAsyncResponse = asyncResponse;
-        mContext = context;
+        mContext = new WeakReference<Context>(context);
         mContentValues = values;
         mTmdbId = tmdbId;
     }
@@ -78,16 +80,16 @@ class TaskFavourite extends AsyncTask<Boolean, Void, Boolean> {
 
             if (isFavourite) {
                 // Delete
-                int rows = mContext.getContentResolver().delete(tableUri, selection, selectionArg);
+                int rows = mContext.get().getContentResolver().delete(tableUri, selection, selectionArg);
                 if (rows > 0) { becameFavourite = false; }
             } else {
                 // Insert
-                Uri returnUri = mContext.getContentResolver().insert(tableUri, mContentValues);
+                Uri returnUri = mContext.get().getContentResolver().insert(tableUri, mContentValues);
                 if (returnUri != null) { becameFavourite = true; }
             }
         } else {
             // Update
-            int rows = mContext.getContentResolver().update(tableUri, mContentValues, selection, selectionArg);
+            int rows = mContext.get().getContentResolver().update(tableUri, mContentValues, selection, selectionArg);
             if (rows > 0) { becameFavourite = true; }
         }
 
